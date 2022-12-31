@@ -1,32 +1,54 @@
-// ask user for first number
-// ask user for second number
-// aks user for type of operator to perform (+, -, *, /)
-// perform operation on both numbers
-// display result
 const rlSync = require('readline-sync');
 
-console.log('Welcome to Calculator!');
-
-console.log("What's the first number?");
-let number1 = Number(rlSync.question());
-
-console.log("What's the second number?");
-let number2 = Number(rlSync.question());
-
-console.log('What operation would you like to perform?\n1) Add 2) Subtract 3) Multiply 4) Divide');
-let operation = rlSync.question();
-
-let output;
-if (operation === '1') { // 1 represents addition
-  output = number1 + number2;
-} else if (operation === '2') { // 2 represents subtration
-  output = number1 - number2;
-} else if (operation === '3') { // 3 represents multiplication
-  output = number1 * number2;
-} else if (operation === '4') { // 4 represents division
-  output = number1 / number2;
-} else {
-  console.log('Please choose a valid option.');
+function prompt(message) {
+  console.log(`=> ${message}`);
 }
 
-console.log(`The result is: ${output}`);
+function invalidNumber(number) {
+  return number.trimStart() === '' || isNaN(Number(number));
+}
+
+prompt('Welcome to Calculator!');
+
+prompt("What's the first number?");
+let number1 = rlSync.question();
+
+while (invalidNumber(number1)) {
+  prompt("Sorry, that's not a valid number.");
+  number1 = rlSync.question();
+}
+
+prompt("What's the second number?");
+let number2 = rlSync.question();
+
+while (invalidNumber(number2)) {
+  prompt("Sorry, that's not a valid number.");
+  number2 = rlSync.question();
+}
+
+prompt('What operation would you like to perform?\n1) Add 2) Subtract 3) Multiply 4) Divide');
+let operation = rlSync.question();
+
+while (![1, 2, 3, 4].includes(operation)) {
+  prompt('Please select a valid option.');
+  operation = rlSync.question();
+}
+
+let output;
+
+switch (operation) {
+  case '1':
+    output = Number(number1) + Number(number2);
+    break;
+  case '2':
+    output = Number(number1) - Number(number2);
+    break;
+  case '3':
+    output = Number(number1) * Number(number2);
+    break;
+  case '4':
+    output = Number(number1) / Number(number2);
+    break;
+}
+
+prompt(`The result is: ${output}`);
