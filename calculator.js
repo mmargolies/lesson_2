@@ -10,6 +10,7 @@ function invalidNumber(number) {
 
 prompt('Welcome to Calculator!');
 
+
 prompt("What's the first number?");
 let number1 = rlSync.question();
 
@@ -32,6 +33,7 @@ let operation = rlSync.question();
 while (![1, 2, 3, 4].includes(operation)) {
   prompt('Please select a valid option.');
   operation = rlSync.question();
+  console.log('>>>', operation);
 }
 
 let output;
