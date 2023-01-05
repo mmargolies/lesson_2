@@ -65,5 +65,5 @@ principal and $${interestTotal} interest).`);
   prompt('Would you like to calculate another loan? (y/n)');
   let calcAgain = rlSync.question().toLowerCase();
 
-  if (calcAgain[0] !== 'y') break;
+  if (calcAgain[0] !== 'y' || calcAgain !== 'yes') break;
 }
