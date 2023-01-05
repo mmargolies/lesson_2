@@ -30,7 +30,7 @@ while (invalidNumber(number2)) {
 prompt('What operation would you like to perform?\n1) Add 2) Subtract 3) Multiply 4) Divide');
 let operation = rlSync.question();
 
-while (![1, 2, 3, 4].includes(operation)) {
+while (!['1', '2', '3', '4'].includes(operation)) {
   prompt('Please select a valid option.');
   operation = rlSync.question();
   console.log('>>>', operation);
