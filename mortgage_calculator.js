@@ -56,11 +56,11 @@ while (true) {
   interestTotal = interestTotal.toFixed(2);
   principalAmount = Number(principalAmount).toFixed(2);
 
-  prompt(`Your monthly payment is $${monthlyPayment} occuring over \
-${durationMonths} months.`);
+  prompt(`Your monthly payment is $${monthlyPayment} occuring over ` +
+        `${durationMonths} months.`);
 
-  prompt(`Your total payment is $${paymentTotal} ($${principalAmount} \
-principal and $${interestTotal} interest).`);
+  prompt(`Your total payment is $${paymentTotal} ($${principalAmount} ` +
+        `principal and $${interestTotal} interest).`);
 
   prompt('Would you like to calculate another loan? (y/n)');
   let calcAgain = rlSync.question().toLowerCase();
