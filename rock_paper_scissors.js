@@ -1,45 +1,41 @@
 const rlSync = require('readline-sync');
-// const VALID_CHOICES = ['rock' , 'paper', 'scissors', 'lizard', 'spock'];
+
 const VALID_CHOICES = {
-  r: 'rock',
-  p: 'paper',
+  r:  'rock',
+  p:  'paper',
   sc: 'scissors',
-  l: 'lizard',
+  l:  'lizard',
   sp: 'spock'
 };
 
 const WINNING_COMBOS = {
-  r: ['lizard', 'scissors'],
-  p: ['rock', 'spock'],
+  r:  ['lizard', 'scissors'],
+  p:  ['rock', 'spock'],
   sc: ['paper', 'lizard'],
-  l: ['paper', 'spock'],
+  l:  ['paper', 'spock'],
   sp: ['rock', 'scissors']
+};
+
+const scorecard = {
+  userRoundWins:     0,
+  computerRoundWins: 0,
+  userMatchWins:     0,
+  computerMatchWins: 0,
+  resetRoundWins() {
+    this.userRoundWins = 0;
+    this.computerRoundWins = 0;
+  }
 };
 
 function prompt(message) {
   console.log(`=> ${message}`);
 }
 
-/* function displayWinner(userChoice, computerChoice) {
-  if ((userChoice === 'rock' && computerChoice === 'scissors') ||
-    (userChoice === 'paper' && computerChoice === 'rock')      ||
-    (userChoice === 'scissors' && computerChoice === 'paper')) {
-
-    prompt('You win!');
-  } else if ((userChoice === 'rock' && computerChoice === 'paper')   ||
-           (userChoice === 'paper' && computerChoice === 'scissors') ||
-           (userChoice === 'scissors' && computerChoice === 'rock')) {
-
-    prompt('Computer wins!');
-  } else {
-    prompt("It's a tie!");
-  }
-} */
-
 function getUserChoice() {
   prompt(`Choose one: ${Object.values(VALID_CHOICES).join(', ')}`);
   prompt('Please enter your choice as an abbreviation:');
   prompt(`(${Object.keys(VALID_CHOICES).join(', ')})`);
+
   return rlSync.question();
 }
 
@@ -48,80 +44,128 @@ function validateUserChoice(choice) {
     prompt("That's not a valid choice.");
     choice = rlSync.question();
   }
+
   return choice;
 }
 
 function generateComputerChoice() {
   let choices = Object.keys(VALID_CHOICES);
   let randomIndex = Math.floor(Math.random() * choices.length);
+
   return choices[randomIndex];
 }
 
-function displayWinner(userChoice, computerChoice) {
-  if (WINNING_COMBOS[userChoice].includes(VALID_CHOICES[computerChoice])) {
+function displayWinner(choiceUser, choiceComputer) {
+  if (WINNING_COMBOS[choiceUser].includes(VALID_CHOICES[choiceComputer])) {
     prompt('You won!');
   } else if (
-    WINNING_COMBOS[computerChoice].includes(VALID_CHOICES[userChoice])) {
+    WINNING_COMBOS[choiceComputer].includes(VALID_CHOICES[choiceUser])) {
     prompt('The computer won!');
   } else {
     prompt("It's a tie!");
   }
 }
 
-while (true) {
-  let userChoice = getUserChoice();
-  userChoice = validateUserChoice(userChoice);
-
-  let computerChoice = generateComputerChoice();
-
-  displayWinner(userChoice, computerChoice);
-
-  prompt(`You chose ${VALID_CHOICES[userChoice]}, ` +
-        `the computer chose ${VALID_CHOICES[computerChoice]}\n`);
-
-  prompt('Would you like to play again? (y/n)');
-  let answer = rlSync.question().toLowerCase();
-  while (answer !== 'y' && answer !== 'n') {
-    prompt('Please enter "y" or "n"');
-    answer = rlSync.question().toLowerCase();
-  }
-
-  if (answer !== 'y') {
-    prompt('Goodbye!');
-    break;
-  }
-  console.clear();
+function displayUserAndCompChoices(choiceUser, choiceComputer) {
+  prompt(`You chose ${VALID_CHOICES[choiceUser]}, ` +
+        `the computer chose ${VALID_CHOICES[choiceComputer]}\n\n`);
 }
 
-/* while (true) {
-  prompt(`Choose one: ${Object.values(VALID_CHOICES).join(', ')}`);
-  prompt('Please enter your choice as an abbreviation:');
-  prompt(`(${Object.keys(VALID_CHOICES).join(', ')})`);
-  let userChoice = rlSync.question();
-
-  while (!VALID_CHOICES.includes(userChoice)) {
-    prompt("That's not a valid choice.");
-    userChoice = rlSync.question();
+function incrementRoundScore(choiceUser, choiceComputer) {
+  if (WINNING_COMBOS[choiceUser].includes(VALID_CHOICES[choiceComputer])) {
+    scorecard.userRoundWins += 1;
+  } else if (
+    WINNING_COMBOS[choiceComputer].includes(VALID_CHOICES[choiceUser])) {
+    scorecard.computerRoundWins += 1;
   }
+}
 
-  let randomIndex = Math.floor(Math.random() * VALID_CHOICES.length);
-  let computerChoice = VALID_CHOICES[randomIndex];
+function incrementMatchScore() {
+  if (scorecard.userRoundWins === 3) {
+    scorecard.userMatchWins += 1;
+    scorecard.resetRoundWins();
 
-  displayWinner(userChoice, computerChoice);
+  } else if (scorecard.computerRoundWins === 3) {
+    scorecard.computerMatchWins += 1;
+    scorecard.resetRoundWins();
+  }
+}
 
-  prompt(`You chose ${userChoice}, the computer chose ${computerChoice}\n`);
+function displayRoundScore() {
+  if (scorecard.userRoundWins + scorecard.computerRoundWins > 0) {
+    prompt(
+      `The current round score is: ` +
+      `${scorecard.userRoundWins} (You) -- ` +
+      `${scorecard.computerRoundWins} (Computer)\n`
+    );
+  }
+}
 
+function displayMatchScore() {
+  if (scorecard.computerMatchWins + scorecard.userMatchWins > 0) {
+    prompt(
+      `The match score is: ` +
+      `${scorecard.userMatchWins} (You) -- ` +
+      `${scorecard.computerMatchWins} (Computer)\n`
+    );
+  }
+}
 
-  prompt('Would you like to play again? (y/n)');
-  let answer = rlSync.question().toLowerCase();
-  while (answer !== 'y' && answer !== 'n') {
+function getChoiceToPlayAgain() {
+  prompt('Good match! Would you like to play again? (y/n)');
+  return rlSync.question().toLowerCase();
+}
+
+function validateChoiceToPlayAgain(choice) {
+  choice = choice.toLowerCase();
+
+  while (choice !== 'y' && choice !== 'n') {
     prompt('Please enter "y" or "n"');
-    answer = rlSync.question().toLowerCase();
+    choice = rlSync.question().toLowerCase();
   }
 
-  if (answer !== 'y') {
+  return choice;
+}
+
+// TODO:
+// Update game loop:
+//    0. Display match winner after a match
+//    0+ Display grand winner when user quits?
+//    1. Figure out a way to console.clear() effectively, without
+//    gettig rid of useful info
+//    2. Fix validation funcs so they return boolean? Idk if its
+//    ok to do reassignment just str8 up in the game loop with while loops
+
+while (true) {
+  prompt("Each match is a best of five!");
+
+  displayMatchScore();
+
+  do {
+    displayRoundScore();
+
+    let userChoice = getUserChoice();
+    userChoice = validateUserChoice(userChoice);
+
+    let computerChoice = generateComputerChoice();
+
+    incrementRoundScore(userChoice, computerChoice);
+
+    displayWinner(userChoice, computerChoice);
+    displayUserAndCompChoices(userChoice, computerChoice);
+
+  } while (scorecard.computerRoundWins < 3 && scorecard.userRoundWins < 3);
+
+  incrementMatchScore();
+
+  let playAgain = getChoiceToPlayAgain();
+  playAgain = validateChoiceToPlayAgain(playAgain);
+
+  if (playAgain !== 'y' && 'yes') {
     prompt('Goodbye!');
+    displayMatchScore();
     break;
   }
+
   console.clear();
-} */
+}
