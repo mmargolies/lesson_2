@@ -16,6 +16,8 @@ const WINNING_COMBOS = {
   sp: ['rock', 'scissors']
 };
 
+const ROUNDS_TO_WIN_MATCH = 3;
+
 const scorecard = {
   userRoundWins:     0,
   computerRoundWins: 0,
@@ -97,10 +99,10 @@ function resetRoundScore() {
 }
 
 function incrementMatchScore() {
-  if (scorecard.userRoundWins === 3) {
+  if (scorecard.userRoundWins === ROUNDS_TO_WIN_MATCH) {
     scorecard.userMatchWins += 1;
 
-  } else if (scorecard.computerRoundWins === 3) {
+  } else if (scorecard.computerRoundWins === ROUNDS_TO_WIN_MATCH) {
     scorecard.computerMatchWins += 1;
   }
 }
@@ -116,7 +118,7 @@ function displayMatchScore() {
 }
 
 function displayMatchWinner() {
-  if (scorecard.userRoundWins === 3) {
+  if (scorecard.userRoundWins === ROUNDS_TO_WIN_MATCH) {
     prompt('You won the match -- congradualtions! :)\n');
   } else {
     prompt('The computer won the match -- better luck next time!\n');
@@ -149,7 +151,9 @@ function displayGrandWinner() {
 
 // GAME LOOP
 while (true) {
-  prompt("Each match is a best of five rounds!\n");
+  prompt("Each match is a best of five rounds!")
+  prompt("Whoever wins the most matches will be the Grand Winner!\n");
+
   displayMatchScore();
 
   do {
@@ -171,7 +175,8 @@ while (true) {
 
     clearAfterEachRound();
 
-  } while (scorecard.computerRoundWins < 3 && scorecard.userRoundWins < 3);
+  } while (scorecard.computerRoundWins < ROUNDS_TO_WIN_MATCH &&
+          scorecard.userRoundWins < ROUNDS_TO_WIN_MATCH);
 
   displayMatchWinner();
   incrementMatchScore();
