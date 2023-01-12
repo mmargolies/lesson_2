@@ -39,13 +39,8 @@ function getUserChoice() {
   return rlSync.question();
 }
 
-function validateUserChoice(choice) {
-  while (!Object.keys(VALID_CHOICES).includes(choice.toLowerCase())) {
-    prompt("That's not a valid choice.");
-    choice = rlSync.question();
-  }
-
-  return choice;
+function isUserChoiceValid(choice) {
+  return Object.keys(VALID_CHOICES).includes(choice.toLowerCase());
 }
 
 function generateComputerChoice() {
@@ -133,15 +128,13 @@ function getChoiceToPlayAgain() {
   return rlSync.question().toLowerCase();
 }
 
-function validateChoiceToPlayAgain(choice) {
+function isChoiceToPlayAgainValid(choice) {
   choice = choice.toLowerCase();
 
-  while (choice !== 'y' && choice !== 'n') {
-    prompt('Please enter "y" or "n"');
-    choice = rlSync.question().toLowerCase();
-  }
-
-  return choice;
+  return choice === 'y'   ||
+         choice === 'yes' ||
+         choice === 'n'   ||
+         choice === 'no';
 }
 
 function displayGrandWinner() {
@@ -154,6 +147,7 @@ function displayGrandWinner() {
   }
 }
 
+// GAME LOOP
 while (true) {
   prompt("Each match is a best of five rounds!\n");
   displayMatchScore();
@@ -162,7 +156,11 @@ while (true) {
     displayRoundScore();
 
     let userChoice = getUserChoice();
-    userChoice = validateUserChoice(userChoice);
+
+    while (!isUserChoiceValid(userChoice)) {
+      prompt("That's not a valid choice.");
+      userChoice = rlSync.question();
+    }
 
     let computerChoice = generateComputerChoice();
 
@@ -180,9 +178,12 @@ while (true) {
   resetRoundScore();
 
   let playAgain = getChoiceToPlayAgain();
-  playAgain = validateChoiceToPlayAgain(playAgain);
+  while (!isChoiceToPlayAgainValid(playAgain)) {
+    prompt('Please enter "y" or "n"');
+    playAgain = rlSync.question().toLowerCase();
+  }
 
-  if (playAgain !== 'y' && 'yes') {
+  if (playAgain !== 'y' && playAgain !== 'yes') {
     displayGrandWinner();
     break;
   }
