@@ -80,17 +80,6 @@ function incrementRoundScore(choiceUser, choiceComputer) {
   }
 }
 
-function incrementMatchScore() {
-  if (scorecard.userRoundWins === 3) {
-    scorecard.userMatchWins += 1;
-    scorecard.resetRoundWins();
-
-  } else if (scorecard.computerRoundWins === 3) {
-    scorecard.computerMatchWins += 1;
-    scorecard.resetRoundWins();
-  }
-}
-
 function displayRoundScore() {
   if (scorecard.userRoundWins + scorecard.computerRoundWins > 0) {
     prompt(
@@ -98,6 +87,26 @@ function displayRoundScore() {
       `${scorecard.userRoundWins} (You) -- ` +
       `${scorecard.computerRoundWins} (Computer)\n`
     );
+  }
+}
+
+function clearAfterEachRound() {
+  rlSync.question(
+    '(Press Enter to continue...)', {hideEchoBack: true, mask: ''}
+  );
+  console.clear();
+}
+
+function resetRoundScore() {
+  scorecard.resetRoundWins();
+}
+
+function incrementMatchScore() {
+  if (scorecard.userRoundWins === 3) {
+    scorecard.userMatchWins += 1;
+
+  } else if (scorecard.computerRoundWins === 3) {
+    scorecard.computerMatchWins += 1;
   }
 }
 
@@ -111,8 +120,16 @@ function displayMatchScore() {
   }
 }
 
+function displayMatchWinner() {
+  if (scorecard.userRoundWins === 3) {
+    prompt('You won the match -- congradualtions! :)\n');
+  } else {
+    prompt('The computer won the match -- better luck next time!\n');
+  }
+}
+
 function getChoiceToPlayAgain() {
-  prompt('Good match! Would you like to play again? (y/n)');
+  prompt('Would you like to play again? (y/n)');
   return rlSync.question().toLowerCase();
 }
 
@@ -127,18 +144,18 @@ function validateChoiceToPlayAgain(choice) {
   return choice;
 }
 
-// TODO:
-// Update game loop:
-//    0. Display match winner after a match
-//    0+ Display grand winner when user quits?
-//    1. Figure out a way to console.clear() effectively, without
-//    gettig rid of useful info
-//    2. Fix validation funcs so they return boolean? Idk if its
-//    ok to do reassignment just str8 up in the game loop with while loops
+function displayGrandWinner() {
+  if (scorecard.userMatchWins > scorecard.computerMatchWins) {
+    prompt("You're the Grand Winner!! See you next time!");
+  } else if (scorecard.userMatchWins < scorecard.computerMatchWins) {
+    prompt("The computer is the Grand Winner...\nAre you gonna let that slide??");
+  } else {
+    prompt("The Grand Winner is...no one!\nYou sure you're ok with a tie?");
+  }
+}
 
 while (true) {
-  prompt("Each match is a best of five!");
-
+  prompt("Each match is a best of five rounds!\n");
   displayMatchScore();
 
   do {
@@ -154,16 +171,19 @@ while (true) {
     displayWinner(userChoice, computerChoice);
     displayUserAndCompChoices(userChoice, computerChoice);
 
+    clearAfterEachRound();
+
   } while (scorecard.computerRoundWins < 3 && scorecard.userRoundWins < 3);
 
+  displayMatchWinner();
   incrementMatchScore();
+  resetRoundScore();
 
   let playAgain = getChoiceToPlayAgain();
   playAgain = validateChoiceToPlayAgain(playAgain);
 
   if (playAgain !== 'y' && 'yes') {
-    prompt('Goodbye!');
-    displayMatchScore();
+    displayGrandWinner();
     break;
   }
 
