@@ -151,7 +151,7 @@ function displayGrandWinner() {
 
 // GAME LOOP
 while (true) {
-  prompt("Each match is a best of five rounds!")
+  prompt("Each match is a best of five rounds!");
   prompt("Whoever wins the most matches will be the Grand Winner!\n");
 
   displayMatchScore();
